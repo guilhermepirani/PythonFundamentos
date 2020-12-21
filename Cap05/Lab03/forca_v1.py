@@ -1,10 +1,10 @@
-# Hangman Game (Jogo da Forca) 
-# Programação Orientada a Objetos
+# Hangman Game
+# OOP
 
 # Import
 import random
 
-# Board (tabuleiro)
+# Board
 board = ['''
 
 >>>>>>>>>>Hangman<<<<<<<<<<
@@ -66,61 +66,84 @@ O   |
 =========''']
 
 
-# Classe
+# Class
 class Hangman:
 
-	# Método Construtor
+	# Constructor
 	def __init__(self, word):
-		
-		
-	# Método para adivinhar a letra
+		self.word = word
+		self.guessed_letters = []
+		self.missed_letters = []
+
+	# Method to check letter
 	def guess(self, letter):
-		
-		
-	# Método para verificar se o jogo terminou
+		if letter in self.word and letter not in self.guessed_letters:
+			self.guessed_letters.append(letter)
+		else:
+			self.missed_letters.append(letter)
+
+	# Method to check if game is over
 	def hangman_over(self):
-		
-		
-	# Método para verificar se o jogador venceu
+		return len(self.missed_letters) == 6 or self.hangman_won()
+
+
+
+	# Method to check if player won
 	def hangman_won(self):
-		
+		if "_" not in self.hide_word():
+			return True
+		return False
 
-	# Método para não mostrar a letra no board
+	# Method that hides starting letters on board
 	def hide_word(self):
-		
-		
-	# Método para checar o status do game e imprimir o board na tela
+		hidden = []
+		for i in self.word:
+			if i in self.guessed_letters:
+				hidden.append(i)
+			else:
+				hidden.append('_')
+
+		return hidden
+
+	# Method to check game status and print board
 	def print_game_status(self):
-		
+		print(board[len(self.missed_letters)])
+		print(f"Word: {self.hide_word()}")
+		print(f"Missed: {self.missed_letters}")
 
-# Função para ler uma palavra de forma aleatória do banco de palavras
+
+# Function to get a word from word bank
 def rand_word():
-        with open("palavras.txt", "rt") as f:
-                bank = f.readlines()
-        return bank[random.randint(0,len(bank))].strip()
+	with open("words.txt", "rt") as f:
+		bank = f.readlines()
+	return bank[random.randint(0, len(bank))].strip()
 
 
-# Função Main - Execução do Programa
+# Main function
 def main():
-
-	# Objeto
+	# Object class Hangman
 	game = Hangman(rand_word())
 
-	# Enquanto o jogo não tiver terminado, print do status, solicita uma letra e faz a leitura do caracter
-	
+	# While game's still running, prints status, ask for input, check input
+	while not game.hangman_over():
+		game.print_game_status()
+		letter = input("\nEnter a letter: ")
+		while not letter.strip().isalpha() or letter == "":
+			print("You must enter one alphabetical character")
+			letter = input("\nEnter a letter: ")
+		game.guess(letter)
 
-	# Verifica o status do jogo
-	game.print_game_status()	
+	# Checks game status
+	game.print_game_status()
 
-	# De acordo com o status, imprime mensagem na tela para o usuário
+	# Prints message according to status
 	if game.hangman_won():
-		print ('\nParabéns! Você venceu!!')
+		print('\nYou won!!')
 	else:
-		print ('\nGame over! Você perdeu.')
-		print ('A palavra era ' + game.word)
-		
-	print ('\nFoi bom jogar com você! Agora vá estudar!\n')
+		print('\nGame over! You lost.')
+		print('The word is ' + game.word)
 
-# Executa o programa		
+
+# Start
 if __name__ == "__main__":
 	main()
